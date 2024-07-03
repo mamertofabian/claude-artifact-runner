@@ -1,14 +1,14 @@
 import React, { useState, useMemo, useEffect } from "react";
 import {
-  ArrowLeft,
-  Search,
-  Tag,
-  PlusCircle,
-  X,
-  ChevronUp,
-  ChevronDown,
-  AlertCircle,
-} from "lucide-react";
+	ArrowLeft,
+	Search,
+	Tag,
+	PlusCircle,
+	X,
+	ChevronUp,
+	ChevronDown,
+	AlertCircle, Github
+} from 'lucide-react';
 
 // Import your artifacts here
 import DjangoStaticFilesExplainer from "./django-static-files-explainer";
@@ -229,118 +229,129 @@ const ArtifactRunner = () => {
   );
 
   const renderArtifactList = () => (
-    <div className="p-4">
-      <h1 className="text-3xl font-bold mb-6 text-white">
-        Claude Artifact Runner
-      </h1>
-      <p className="text-gray-300 mb-6">
-        An interactive web application for showcasing and exploring various web
-        development artifacts. Search, sort, and interact with React components
-        and HTML files in a unified interface. Perfect for educational purposes,
-        code demonstrations, and component libraries.
-      </p>
-      <div className="mb-4 flex flex-col sm:flex-row items-stretch sm:items-center">
-        <div className="relative flex-grow mb-2 sm:mb-0 sm:mr-4">
-          <input
-            type="text"
-            placeholder="Search artifacts..."
-            className="w-full p-2 pl-8 border rounded bg-gray-700 text-white"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <Search className="absolute left-2 top-2 text-gray-400" size={20} />
-        </div>
-        <select
-          className="p-2 border rounded bg-gray-700 text-white"
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-        >
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="mb-4">
-        <button
-          onClick={() => setShowInstructions(true)}
-          className="flex items-center text-blue-400 hover:text-blue-300"
-        >
-          <PlusCircle className="mr-2" size={20} />
-          How to Add a New Artifact
-        </button>
-      </div>
-      {filteredArtifacts.length === 0 ? (
-        <p className="text-gray-400">
-          No artifacts found matching your criteria.
-        </p>
-      ) : (
-        <div>
-          <div className="grid grid-cols-3 gap-4 mb-2 text-gray-300 font-semibold">
-            <button
-              onClick={() => handleSort("name")}
-              className="flex items-center"
-            >
-              Name {renderSortIcon("name")}
-            </button>
-            <button
-              onClick={() => handleSort("category")}
-              className="flex items-center"
-            >
-              Category {renderSortIcon("category")}
-            </button>
-            <button
-              onClick={() => handleSort("version")}
-              className="flex items-center"
-            >
-              Version {renderSortIcon("version")}
-            </button>
-          </div>
-          <ul className="space-y-4">
-            {filteredArtifacts.map((artifact) => (
-              <li
-                key={artifact.id}
-                className="border p-4 rounded hover:shadow-md transition-shadow border-gray-700 hover:shadow-lg hover:shadow-gray-700"
-              >
-                <h2 className="text-xl font-semibold mb-2">
-                  <button
-                    className="text-blue-400 hover:text-blue-300"
-                    onClick={() => setSelectedArtifact(artifact)}
-                  >
-                    {artifact.name}
-                  </button>
-                </h2>
-                <p className="text-gray-300 mb-2">{artifact.description}</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Tag size={16} className="text-gray-400 mr-1" />
-                    <span className="text-sm text-gray-400">
+		<div className="p-4">
+			<h1 className="text-3xl font-bold mb-6 text-white">
+				Claude Artifact Runner
+			</h1>
+			<p className="text-gray-300 mb-6">
+				An interactive web application for showcasing and exploring various web
+				development artifacts. Search, sort, and interact with React components
+				and HTML files in a unified interface. Perfect for educational purposes,
+				code demonstrations, and component libraries.
+			</p>
+			<p className="text-gray-300 mb-6 flex items-center">
+				<Github size={20} className="mr-2"/>
+				<a
+					href="https://github.com/mamertofabian/claude-artifact-runner"
+					target="_blank"
+					rel="noopener noreferrer"
+					className="text-blue-400 hover:text-blue-300"
+				>
+					View on GitHub
+				</a>
+			</p>
+			<div className="mb-4 flex flex-col sm:flex-row items-stretch sm:items-center">
+				<div className="relative flex-grow mb-2 sm:mb-0 sm:mr-4">
+					<input
+						type="text"
+						placeholder="Search artifacts..."
+						className="w-full p-2 pl-8 border rounded bg-gray-700 text-white"
+						value={searchTerm}
+						onChange={(e) => setSearchTerm(e.target.value)}
+					/>
+					<Search className="absolute left-2 top-2 text-gray-400" size={20}/>
+				</div>
+				<select
+					className="p-2 border rounded bg-gray-700 text-white"
+					value={selectedCategory}
+					onChange={(e) => setSelectedCategory(e.target.value)}
+				>
+					{categories.map((category) => (
+						<option key={category} value={category}>
+							{category}
+						</option>
+					))}
+				</select>
+			</div>
+			<div className="mb-4">
+				<button
+					onClick={() => setShowInstructions(true)}
+					className="flex items-center text-blue-400 hover:text-blue-300"
+				>
+					<PlusCircle className="mr-2" size={20}/>
+					How to Add a New Artifact
+				</button>
+			</div>
+			{filteredArtifacts.length === 0 ? (
+				<p className="text-gray-400">
+					No artifacts found matching your criteria.
+				</p>
+			) : (
+				<div>
+					<div className="grid grid-cols-3 gap-4 mb-2 text-gray-300 font-semibold">
+						<button
+							onClick={() => handleSort('name')}
+							className="flex items-center"
+						>
+							Name {renderSortIcon('name')}
+						</button>
+						<button
+							onClick={() => handleSort('category')}
+							className="flex items-center"
+						>
+							Category {renderSortIcon('category')}
+						</button>
+						<button
+							onClick={() => handleSort('version')}
+							className="flex items-center"
+						>
+							Version {renderSortIcon('version')}
+						</button>
+					</div>
+					<ul className="space-y-4">
+						{filteredArtifacts.map((artifact) => (
+							<li
+								key={artifact.id}
+								className="border p-4 rounded hover:shadow-md transition-shadow border-gray-700 hover:shadow-lg hover:shadow-gray-700"
+							>
+								<h2 className="text-xl font-semibold mb-2">
+									<button
+										className="text-blue-400 hover:text-blue-300"
+										onClick={() => setSelectedArtifact(artifact)}
+									>
+										{artifact.name}
+									</button>
+								</h2>
+								<p className="text-gray-300 mb-2">{artifact.description}</p>
+								<div className="flex items-center justify-between">
+									<div className="flex items-center">
+										<Tag size={16} className="text-gray-400 mr-1"/>
+										<span className="text-sm text-gray-400">
                       {artifact.category}
                     </span>
-                  </div>
-                  <span className="text-sm text-gray-400">
+									</div>
+									<span className="text-sm text-gray-400">
                     v{artifact.version}
                   </span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
+								</div>
+							</li>
+						))}
+					</ul>
+				</div>
+			)}
+		</div>
+	);
 
-  const renderSelectedArtifact = () => (
-    <div className="p-4">
-      <button
-        className="mb-4 flex items-center text-blue-400 hover:text-blue-300"
-        onClick={() => setSelectedArtifact(null)}
-      >
-        <ArrowLeft className="mr-2" size={20} />
-        Back to List
-      </button>
-      <h2 className="text-2xl font-bold mb-2 text-white">
+	const renderSelectedArtifact = () => (
+		<div className="p-4">
+			<button
+				className="mb-4 flex items-center text-blue-400 hover:text-blue-300"
+				onClick={() => setSelectedArtifact(null)}
+			>
+				<ArrowLeft className="mr-2" size={20}/>
+				Back to List
+			</button>
+			<h2 className="text-2xl font-bold mb-2 text-white">
         {selectedArtifact.name}
       </h2>
       <p className="text-gray-300 mb-4">{selectedArtifact.description}</p>
