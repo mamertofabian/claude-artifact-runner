@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { ArrowLeft, Search, Tag, PlusCircle, X } from "lucide-react";
 
 // Import your artifacts here
@@ -14,6 +14,7 @@ const defaultArtifacts = [
     category: "Web Development",
     description: "Interactive explanation of Django static files concepts.",
     version: "1.0.0",
+    type: "react",
   },
   {
     id: "mood-board-generator",
@@ -22,7 +23,18 @@ const defaultArtifacts = [
     category: "Design",
     description: "Generate a mood board with random shapes and colors.",
     version: "1.0.0",
+    type: "react",
   },
+  {
+    id: "confetti-animation",
+    name: "Confetti Animation",
+    path: "/artifacts/html/confetti-animation.html",
+    category: "Animation",
+    description: "A confetti animation using matter.js.",
+    version: "1.0.0",
+    type: "html",
+  },
+
   // Add other default artifacts here
 ];
 
@@ -32,6 +44,7 @@ const ArtifactRunner = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [showInstructions, setShowInstructions] = useState(false);
+  const [htmlContent, setHtmlContent] = useState("");
 
   const categories = useMemo(() => {
     const cats = new Set(artifacts.map((a) => a.category));
@@ -47,6 +60,15 @@ const ArtifactRunner = () => {
           artifact.description.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   }, [artifacts, searchTerm, selectedCategory]);
+
+  useEffect(() => {
+    if (selectedArtifact && selectedArtifact.type === "html") {
+      fetch(selectedArtifact.path)
+        .then((response) => response.text())
+        .then((content) => setHtmlContent(content))
+        .catch((error) => console.error("Error loading HTML file:", error));
+    }
+  }, [selectedArtifact]);
 
   const renderInstructions = () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -64,37 +86,55 @@ const ArtifactRunner = () => {
         </div>
         <ol className="list-decimal list-inside space-y-4 text-gray-200">
           <li>
-            Create a new file in the{" "}
-            <code className="bg-gray-700 p-1 rounded">src/artifacts/</code>{" "}
-            directory for your artifact (e.g.,{" "}
-            <code className="bg-gray-700 p-1 rounded">NewArtifact.js</code>).
+            For React components:
+            <ul className="list-disc list-inside ml-4 mt-2">
+              <li>
+                Create a new file in the{" "}
+                <code className="bg-gray-700 p-1 rounded">src/artifacts/</code>{" "}
+                directory (e.g.,{" "}
+                <code className="bg-gray-700 p-1 rounded">NewArtifact.js</code>
+                ).
+              </li>
+              <li>
+                Create and export your artifact as a default React component.
+              </li>
+              <li>Import your new artifact in this file.</li>
+            </ul>
           </li>
           <li>
-            In this new file, create and export your artifact as a default React
-            component.
+            For HTML files:
+            <ul className="list-disc list-inside ml-4 mt-2">
+              <li>
+                Create a new HTML file in the{" "}
+                <code className="bg-gray-700 p-1 rounded">
+                  public/artifacts/html/
+                </code>{" "}
+                directory (e.g.,{" "}
+                <code className="bg-gray-700 p-1 rounded">
+                  new-artifact.html
+                </code>
+                ).
+              </li>
+              <li>
+                Ensure your HTML file is self-contained (includes any necessary
+                CSS and JavaScript).
+              </li>
+            </ul>
           </li>
           <li>
-            Open{" "}
-            <code className="bg-gray-700 p-1 rounded">
-              src/artifacts/index.js
-            </code>{" "}
-            and import your new artifact at the top of the file:
-            <pre className="bg-gray-700 p-2 rounded mt-2">
-              import NewArtifact from './NewArtifact';
-            </pre>
-          </li>
-          <li>
-            In the same file, add a new entry to the{" "}
+            Add a new entry to the{" "}
             <code className="bg-gray-700 p-1 rounded">defaultArtifacts</code>{" "}
             array:
             <pre className="bg-gray-700 p-2 rounded mt-2">
               {`{
   id: 'unique-id-for-new-artifact',
   name: 'New Artifact Name',
-  component: NewArtifact,
+  component: NewArtifact, // for React components
+  path: '/artifacts/html/new-artifact.html', // for HTML files
   category: 'Your Category',
   description: 'Brief description of your artifact.',
   version: '1.0.0',
+  type: 'react', // or 'html' for HTML files
 },`}
             </pre>
           </li>
@@ -104,9 +144,9 @@ const ArtifactRunner = () => {
           <li>Your new artifact should now appear in the Artifact Runner!</li>
         </ol>
         <p className="mt-4 text-sm text-gray-400">
-          Note: Always ensure that your artifact component is self-contained and
-          doesn't rely on external dependencies that aren't available in the
-          Artifact Runner environment.
+          Note: Ensure that your artifact (React component or HTML file) is
+          self-contained and doesn't rely on external resources that aren't
+          available in the Artifact Runner environment.
         </p>
       </div>
     </div>
@@ -199,7 +239,16 @@ const ArtifactRunner = () => {
       <h2 className="text-2xl font-bold mb-4 text-white">
         {selectedArtifact.name}
       </h2>
-      <selectedArtifact.component />
+      {selectedArtifact.type === "react" ? (
+        <selectedArtifact.component />
+      ) : (
+        <iframe
+          srcDoc={htmlContent}
+          title={selectedArtifact.name}
+          className="w-full h-[calc(100vh-200px)] border-none"
+          sandbox="allow-scripts"
+        />
+      )}
     </div>
   );
 
