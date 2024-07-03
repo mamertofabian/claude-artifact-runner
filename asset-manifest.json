@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/claude-artifact-runner/static/css/main.674e61d7.css",
-    "main.js": "/claude-artifact-runner/static/js/main.55b592ad.js",
+    "main.js": "/claude-artifact-runner/static/js/main.47a72652.js",
     "static/js/453.c9711587.chunk.js": "/claude-artifact-runner/static/js/453.c9711587.chunk.js",
     "index.html": "/claude-artifact-runner/index.html",
     "main.674e61d7.css.map": "/claude-artifact-runner/static/css/main.674e61d7.css.map",
-    "main.55b592ad.js.map": "/claude-artifact-runner/static/js/main.55b592ad.js.map",
+    "main.47a72652.js.map": "/claude-artifact-runner/static/js/main.47a72652.js.map",
     "453.c9711587.chunk.js.map": "/claude-artifact-runner/static/js/453.c9711587.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.674e61d7.css",
-    "static/js/main.55b592ad.js"
+    "static/js/main.47a72652.js"
   ]
 }
