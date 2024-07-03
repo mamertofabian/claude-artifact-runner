@@ -106,7 +106,7 @@ const ArtifactRunner = () => {
     if (selectedArtifact && selectedArtifact.type === "html") {
       setIsLoading(true);
       setError(null);
-      fetch(selectedArtifact.path)
+      fetch(`${process.env.PUBLIC_URL}${selectedArtifact.path}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error("Failed to load artifact");
@@ -203,15 +203,15 @@ const ArtifactRunner = () => {
             array:
             <pre className="bg-gray-700 p-2 rounded mt-2">
               {`{
-  id: 'unique-id-for-new-artifact',
-  name: 'New Artifact Name',
-  component: NewArtifact, // for React components
-  path: '/artifacts/html/new-artifact.html', // for HTML files
-  category: 'Your Category',
-  description: 'Brief description of your artifact.',
-  version: '1.0.0',
-  type: 'react', // or 'html' for HTML files
-},`}
+              id: 'unique-id-for-new-artifact',
+              name: 'New Artifact Name',
+              component: NewArtifact, // for React components
+              path: '/artifacts/html/new-artifact.html', // for HTML files
+              category: 'Your Category',
+              description: 'Brief description of your artifact.',
+              version: '1.0.0',
+              type: 'react', // or 'html' for HTML files
+            },`}
             </pre>
           </li>
           <li>
