@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confetti Celebration</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        #trigger-button {
+            font-size: 1.2rem;
+            padding: 15px 30px;
+            cursor: pointer;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+            max-width: 300px;
+        }
+        #trigger-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+            filter: brightness(1.1);
+        }
+        #trigger-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <button id="trigger-button">Celebrate! 🎉</button>
+    <canvas id="confetti-canvas"></canvas>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.18.0/matter.min.js"></script>
+    <script>
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        const triggerButton = document.getElementById('trigger-button');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const Engine = Matter.Engine,
+              Render = Matter.Render,
+              World = Matter.World,
+              Bodies = Matter.Bodies;
+
+        const engine = Engine.create();
+        const world = engine.world;
+
+        const confettiColors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff8000', '#8000ff'];
+        const confettiShapes = ['circle', 'rectangle', 'triangle'];
+        const confettiCount = 150;
+
+        const congratulatoryMessages = [
+            "Great job! 🌟",
+            "Mission accomplished! 🚀",
+            "You did it! 🏆",
+            "Excellent work! 👏",
+            "Success achieved! 🎯",
+            "Bravo! Outstanding! 🌈",
+            "Challenge completed! 💪",
+            "You're a star! ⭐",
+            "Fantastic effort! 🎊",
+            "Goal crushed! 🏅",
+            "Superb performance! 🦸‍♂️",
+            "You've conquered it! 🏰",
+            "Amazing achievement! 🌠",
+            "Victory is yours! 🏁",
+            "Brilliant success! 💡"
+        ];
+
+        const buttonColors = [
+            '#4CAF50', '#2196F3', '#FFC107', '#E91E63', '#9C27B0',
+            '#00BCD4', '#FF5722', '#795548', '#607D8B', '#3F51B5'
+        ];
+
+        function getRandomItem(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        function updateButton() {
+            triggerButton.textContent = getRandomItem(congratulatoryMessages);
+            triggerButton.style.backgroundColor = getRandomItem(buttonColors);
+        }
+
+        function createConfettiPiece(x, y) {
+            const color = getRandomItem(confettiColors);
+            const shape = getRandomItem(confettiShapes);
+            const size = Math.random() * 8 + 4;
+
+            let body;
+            if (shape === 'circle') {
+                body = Bodies.circle(x, y, size / 2, {
+                    friction: 0.1,
+                    restitution: 0.8,
+                    render: { fillStyle: color }
+                });
+            } else if (shape === 'rectangle') {
+                body = Bodies.rectangle(x, y, size, size / 2, {
+                    friction: 0.1,
+                    restitution: 0.8,
+                    render: { fillStyle: color }
+                });
+            } else {
+                const vertices = [
+                    { x: 0, y: 0 },
+                    { x: size, y: 0 },
+                    { x: size / 2, y: size }
+                ];
+                body = Bodies.fromVertices(x, y, vertices, {
+                    friction: 0.1,
+                    restitution: 0.8,
+                    render: { fillStyle: color }
+                });
+            }
+
+            return body;
+        }
+
+        function popConfetti() {
+            updateButton();
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const maxHeight = centerY - 50;
+
+            for (let i = 0; i < confettiCount; i++) {
+                const angle = Math.random() * Math.PI;
+                const radius = Math.random() * 100 + 50;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY - Math.abs(Math.sin(angle) * radius);
+                const confetti = createConfettiPiece(x, Math.min(y, maxHeight));
+                
+                const force = {
+                    x: (Math.random() - 0.5) * 0.002,
+                    y: Math.random() * -0.002 - 0.001
+                };
+                
+                Matter.Body.applyForce(confetti, confetti.position, force);
+                World.add(world, confetti);
+            }
+        }
+
+        triggerButton.addEventListener('click', popConfetti);
+
+        (function render() {
+            Engine.update(engine);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const bodies = Matter.Composite.allBodies(world);
+            bodies.forEach((body) => {
+                if (body.position.y > canvas.height + 50) {
+                    World.remove(world, body);
+                }
+
+                ctx.beginPath();
+                const vertices = body.vertices;
+                ctx.moveTo(vertices[0].x, vertices[0].y);
+                for (let j = 1; j < vertices.length; j++) {
+                    ctx.lineTo(vertices[j].x, vertices[j].y);
+                }
+                ctx.closePath();
+                ctx.fillStyle = body.render.fillStyle;
+                ctx.fill();
+            });
+
+            requestAnimationFrame(render);
+        })();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Set initial random message and color
+        updateButton();
+    </script>
+</body>
+</html>
