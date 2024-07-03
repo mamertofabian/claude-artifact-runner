@@ -1,9 +1,19 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { ArrowLeft, Search, Tag, PlusCircle, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Search,
+  Tag,
+  PlusCircle,
+  X,
+  ChevronUp,
+  ChevronDown,
+  AlertCircle,
+} from "lucide-react";
 
 // Import your artifacts here
 import DjangoStaticFilesExplainer from "./django-static-files-explainer";
 import MoodBoardGenerator from "./mood-board-generator";
+import SurvivalGame from "./survival-game-component";
 // import OtherArtifact from './OtherArtifact';
 
 const defaultArtifacts = [
@@ -34,6 +44,15 @@ const defaultArtifacts = [
     version: "1.0.0",
     type: "html",
   },
+  {
+    id: "survival-game-component",
+    name: "Survival Game Component",
+    component: SurvivalGame,
+    category: "Games",
+    description: "A simple survival game component.",
+    version: "1.0.0",
+    type: "react",
+  },
 
   // Add other default artifacts here
 ];
@@ -45,30 +64,87 @@ const ArtifactRunner = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [showInstructions, setShowInstructions] = useState(false);
   const [htmlContent, setHtmlContent] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [sortConfig, setSortConfig] = useState({
+    key: "name",
+    direction: "ascending",
+  });
 
   const categories = useMemo(() => {
     const cats = new Set(artifacts.map((a) => a.category));
     return ["All", ...Array.from(cats)];
   }, [artifacts]);
 
+  const sortedArtifacts = useMemo(() => {
+    let sortableArtifacts = [...artifacts];
+    if (sortConfig.key) {
+      sortableArtifacts.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableArtifacts;
+  }, [artifacts, sortConfig]);
+
   const filteredArtifacts = useMemo(() => {
-    return artifacts.filter(
+    return sortedArtifacts.filter(
       (artifact) =>
         (selectedCategory === "All" ||
           artifact.category === selectedCategory) &&
         (artifact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           artifact.description.toLowerCase().includes(searchTerm.toLowerCase()))
     );
-  }, [artifacts, searchTerm, selectedCategory]);
+  }, [sortedArtifacts, searchTerm, selectedCategory]);
 
   useEffect(() => {
     if (selectedArtifact && selectedArtifact.type === "html") {
+      setIsLoading(true);
+      setError(null);
       fetch(selectedArtifact.path)
-        .then((response) => response.text())
-        .then((content) => setHtmlContent(content))
-        .catch((error) => console.error("Error loading HTML file:", error));
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to load artifact");
+          }
+          return response.text();
+        })
+        .then((content) => {
+          setHtmlContent(content);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error loading HTML file:", error);
+          setError("Failed to load artifact. Please try again later.");
+          setIsLoading(false);
+        });
     }
   }, [selectedArtifact]);
+
+  const handleSort = (key) => {
+    setSortConfig((prevConfig) => ({
+      key,
+      direction:
+        prevConfig.key === key && prevConfig.direction === "ascending"
+          ? "descending"
+          : "ascending",
+    }));
+  };
+
+  const renderSortIcon = (key) => {
+    if (sortConfig.key === key) {
+      return sortConfig.direction === "ascending" ? (
+        <ChevronUp size={14} />
+      ) : (
+        <ChevronDown size={14} />
+      );
+    }
+    return null;
+  };
 
   const renderInstructions = () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -157,8 +233,8 @@ const ArtifactRunner = () => {
       <h1 className="text-3xl font-bold mb-6 text-white">
         Claude Artifact Runner
       </h1>
-      <div className="mb-4 flex items-center flex-wrap">
-        <div className="relative flex-grow mb-2 sm:mb-0">
+      <div className="mb-4 flex flex-col sm:flex-row items-stretch sm:items-center">
+        <div className="relative flex-grow mb-2 sm:mb-0 sm:mr-4">
           <input
             type="text"
             placeholder="Search artifacts..."
@@ -169,7 +245,7 @@ const ArtifactRunner = () => {
           <Search className="absolute left-2 top-2 text-gray-400" size={20} />
         </div>
         <select
-          className="ml-0 sm:ml-4 p-2 border rounded bg-gray-700 text-white"
+          className="p-2 border rounded bg-gray-700 text-white"
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
         >
@@ -194,35 +270,57 @@ const ArtifactRunner = () => {
           No artifacts found matching your criteria.
         </p>
       ) : (
-        <ul className="space-y-4">
-          {filteredArtifacts.map((artifact) => (
-            <li
-              key={artifact.id}
-              className="border p-4 rounded hover:shadow-md transition-shadow border-gray-700 hover:shadow-lg hover:shadow-gray-700"
+        <div>
+          <div className="grid grid-cols-3 gap-4 mb-2 text-gray-300 font-semibold">
+            <button
+              onClick={() => handleSort("name")}
+              className="flex items-center"
             >
-              <h2 className="text-xl font-semibold mb-2">
-                <button
-                  className="text-blue-400 hover:text-blue-300"
-                  onClick={() => setSelectedArtifact(artifact)}
-                >
-                  {artifact.name}
-                </button>
-              </h2>
-              <p className="text-gray-300 mb-2">{artifact.description}</p>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Tag size={16} className="text-gray-400 mr-1" />
+              Name {renderSortIcon("name")}
+            </button>
+            <button
+              onClick={() => handleSort("category")}
+              className="flex items-center"
+            >
+              Category {renderSortIcon("category")}
+            </button>
+            <button
+              onClick={() => handleSort("version")}
+              className="flex items-center"
+            >
+              Version {renderSortIcon("version")}
+            </button>
+          </div>
+          <ul className="space-y-4">
+            {filteredArtifacts.map((artifact) => (
+              <li
+                key={artifact.id}
+                className="border p-4 rounded hover:shadow-md transition-shadow border-gray-700 hover:shadow-lg hover:shadow-gray-700"
+              >
+                <h2 className="text-xl font-semibold mb-2">
+                  <button
+                    className="text-blue-400 hover:text-blue-300"
+                    onClick={() => setSelectedArtifact(artifact)}
+                  >
+                    {artifact.name}
+                  </button>
+                </h2>
+                <p className="text-gray-300 mb-2">{artifact.description}</p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Tag size={16} className="text-gray-400 mr-1" />
+                    <span className="text-sm text-gray-400">
+                      {artifact.category}
+                    </span>
+                  </div>
                   <span className="text-sm text-gray-400">
-                    {artifact.category}
+                    v{artifact.version}
                   </span>
                 </div>
-                <span className="text-sm text-gray-400">
-                  v{artifact.version}
-                </span>
-              </div>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );
@@ -236,16 +334,31 @@ const ArtifactRunner = () => {
         <ArrowLeft className="mr-2" size={20} />
         Back to List
       </button>
-      <h2 className="text-2xl font-bold mb-4 text-white">
+      <h2 className="text-2xl font-bold mb-2 text-white">
         {selectedArtifact.name}
       </h2>
-      {selectedArtifact.type === "react" ? (
+      <p className="text-gray-300 mb-4">{selectedArtifact.description}</p>
+      <div className="flex items-center text-sm text-gray-400 mb-4">
+        <Tag size={16} className="mr-1" />
+        <span className="mr-4">{selectedArtifact.category}</span>
+        <span>Version: {selectedArtifact.version}</span>
+      </div>
+      {isLoading ? (
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      ) : error ? (
+        <div className="flex items-center justify-center h-64 text-red-500">
+          <AlertCircle size={24} className="mr-2" />
+          <span>{error}</span>
+        </div>
+      ) : selectedArtifact.type === "react" ? (
         <selectedArtifact.component />
       ) : (
         <iframe
           srcDoc={htmlContent}
           title={selectedArtifact.name}
-          className="w-full h-[calc(100vh-200px)] border-none"
+          className="w-full h-[calc(100vh-250px)] border-none"
           sandbox="allow-scripts"
         />
       )}
