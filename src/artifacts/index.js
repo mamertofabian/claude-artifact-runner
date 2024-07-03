@@ -233,6 +233,12 @@ const ArtifactRunner = () => {
       <h1 className="text-3xl font-bold mb-6 text-white">
         Claude Artifact Runner
       </h1>
+      <p className="text-gray-300 mb-6">
+        An interactive web application for showcasing and exploring various web
+        development artifacts. Search, sort, and interact with React components
+        and HTML files in a unified interface. Perfect for educational purposes,
+        code demonstrations, and component libraries.
+      </p>
       <div className="mb-4 flex flex-col sm:flex-row items-stretch sm:items-center">
         <div className="relative flex-grow mb-2 sm:mb-0 sm:mr-4">
           <input
