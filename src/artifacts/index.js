@@ -3,6 +3,7 @@ import { ArrowLeft, Search, Tag, PlusCircle, X } from "lucide-react";
 
 // Import your artifacts here
 import DjangoStaticFilesExplainer from "./django-static-files-explainer";
+import MoodBoardGenerator from "./mood-board-generator";
 // import OtherArtifact from './OtherArtifact';
 
 const defaultArtifacts = [
@@ -12,6 +13,14 @@ const defaultArtifacts = [
     component: DjangoStaticFilesExplainer,
     category: "Web Development",
     description: "Interactive explanation of Django static files concepts.",
+    version: "1.0.0",
+  },
+  {
+    id: "mood-board-generator",
+    name: "Mood Board Generator",
+    component: MoodBoardGenerator,
+    category: "Design",
+    description: "Generate a mood board with random shapes and colors.",
     version: "1.0.0",
   },
   // Add other default artifacts here
