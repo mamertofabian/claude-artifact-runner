@@ -14,6 +14,7 @@ import {
 import DjangoStaticFilesExplainer from "./django-static-files-explainer";
 import MoodBoardGenerator from "./mood-board-generator";
 import SurvivalGame from "./survival-game-component";
+import ArchSpecWorkflow from "./archspec-workflow";
 // import OtherArtifact from './OtherArtifact';
 
 const defaultArtifacts = [
@@ -52,6 +53,15 @@ const defaultArtifacts = [
     description: "A simple survival game component.",
     version: "1.0.0",
     type: "react",
+  },
+  {
+    id: 'archspec-workflow',
+    name: 'ArchSpec Workflow',
+    component: ArchSpecWorkflow, // for React components
+    category: 'Web Development',
+    description: 'ArchSpec is an AI-powered specification system that transforms how developers work with AI coding tools. Create comprehensive, implementation-ready blueprints before writing code, dramatically improving AI-generated results and eliminating endless iterations.',
+    version: '1.0.0',
+    type: 'react', // or 'html' for HTML files
   },
 
   // Add other default artifacts here

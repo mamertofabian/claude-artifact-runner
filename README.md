@@ -43,12 +43,12 @@ To set up the Claude Artifact Runner on your local machine, follow these steps:
 3. Install the dependencies:
 
    ```
-   npm install
+   pnpm install
    ```
 
 4. Start the development server:
    ```
-   npm start
+   pnpm start
    ```
 
 The application should now be running on `http://localhost:3000`.
@@ -127,7 +127,7 @@ To deploy the Claude Artifact Runner to GitHub Pages, follow these steps:
 2. Install the `gh-pages` package as a dev dependency:
 
    ```
-   npm install gh-pages --save-dev
+   pnpm install gh-pages --save-dev
    ```
 
 3. Open your `package.json` file and add the following properties:
@@ -136,7 +136,7 @@ To deploy the Claude Artifact Runner to GitHub Pages, follow these steps:
    {
      "homepage": "https://<username>.github.io/<repository-name>",
      "scripts": {
-       "predeploy": "npm run build",
+       "predeploy": "pnpm run build",
        "deploy": "gh-pages -d build"
      }
    }
@@ -155,7 +155,7 @@ To deploy the Claude Artifact Runner to GitHub Pages, follow these steps:
 6. Run the deploy script:
 
    ```
-   npm run deploy
+   pnpm run deploy
    ```
 
 7. Go to your GitHub repository settings. Under the "Pages" section, select the `gh-pages` branch as the source for GitHub Pages.
